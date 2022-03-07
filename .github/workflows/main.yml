@@ -28,4 +28,3 @@ jobs:
       - run: npm install -g @angular/cli
       - run: ng build --prod      
       - run: npm run build --if-present
-      - run: npm test
