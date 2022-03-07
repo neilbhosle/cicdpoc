@@ -1,15 +1,16 @@
-name: Angular GitHub CI/CD
+name: Angular GitHub CI
 on:
   push:
     branches:
       - main
+
 jobs:
   ci:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [10.x, 12.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -39,23 +40,9 @@ jobs:
       - name: Build
         run: |
           npm run build -- --prod
-      - name: Conventional Changelog Action
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v3
-        with:
-          github-token: ${{ secrets.TOKEN_GITHUB_ACTION }}
-          output-file: "false"
-
-      - name: Create Release
-        uses: actions/create-release@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB_ACTION }}
-        with:
-          tag_name: ${{ steps.changelog.outputs.tag }}
-          release_name: ${{ steps.changelog.outputs.tag }}
-          body: ${{ steps.changelog.outputs.clean_changelog }}
-
-      - name: Deploy
+      - name: Lint
         run: |
-          npm run deploy
+          npm run lint
+      - name: Test
+        run: |
+          npm run test -- --prod
